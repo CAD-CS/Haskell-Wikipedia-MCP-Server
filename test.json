@@ -1,0 +1,1 @@
+{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"wikipedia_summary","arguments":{"topic":"Haskell_(programming_language)"}}}
