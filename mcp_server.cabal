@@ -12,7 +12,7 @@ executable my-mcp-server
       ToolResolver,
       ToolSchemas,
       Dispatch,
-      Extractor,
+      ArgumentExtractor,
       Wikipedia,
       Request,
       Response

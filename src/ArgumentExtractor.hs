@@ -1,4 +1,4 @@
-module Extractor where
+module ArgumentExtractor where
 
 import Data.Aeson
 import Data.Aeson.KeyMap (lookup)

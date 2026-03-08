@@ -3,7 +3,7 @@
 module ToolResolver where
 
 import Dispatch
-import Extractor
+import ArgumentExtractor
 import Request
 import Response
 import Wikipedia
