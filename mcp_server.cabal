@@ -15,7 +15,8 @@ executable my-mcp-server
       ArgumentExtractor,
       Wikipedia,
       Request,
-      Response
+      Response,
+      ResultExtractor
   default-language:    Haskell2010
   ghc-options:         -Wall -Wno-unused-do-bind
 
