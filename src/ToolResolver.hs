@@ -8,12 +8,13 @@ import Request
 import Response
 import Wikipedia
 
-resolveTool :: Int -> Parameters -> IO Response
+resolveTool :: Maybe Int -> Parameters -> IO Response
 resolveTool reqId p =
     case toolName p of
-        "wikipedia_summary" -> dispatch getWikipediaSummary
-        "wikipedia_languages" -> dispatch getWikipediaLanguages
-        "wikipedia_history" -> dispatch getWikipediaHistory
-        _ -> return $ Response (Just reqId) $ Left $ RPCError (-32601) "Unrecognized tool"
+        Just "wikipedia_summary" -> dispatch getWikipediaSummary
+        Just "wikipedia_languages" -> dispatch getWikipediaLanguages
+        Just "wikipedia_history" -> dispatch getWikipediaHistory
+        Just _ -> return $ Response reqId $ Left $ RPCError (-32601) "Unrecognized tool"
+        Nothing -> return $ Response reqId $ Left $ RPCError (-32601) "Unrecognized tool"
   where
-    dispatch tool = dispatchTool (Just reqId) (extractTopic p) tool
+    dispatch tool = dispatchTool reqId (extractTopic p) tool

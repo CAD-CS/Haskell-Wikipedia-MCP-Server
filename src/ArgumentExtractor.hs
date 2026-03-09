@@ -9,6 +9,9 @@ import Request
 
 extractTopic :: Parameters -> Maybe String
 extractTopic p =
-    case lookup (fromString "topic") (arguments p) of
-        Just (String t) -> Just (unpack t)
-        _ -> Nothing
+    case arguments p of 
+        Nothing -> Nothing
+        Just args -> 
+            case lookup (fromString "topic") args of
+                Just (String t) -> Just (unpack t)
+                _ -> Nothing

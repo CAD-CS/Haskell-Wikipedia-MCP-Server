@@ -9,7 +9,7 @@ import Response
 import ToolSchemas
 
 handleInitialize :: Request -> Response
-handleInitialize req = Response (Just (requestId req)) (Right body)
+handleInitialize req = Response (requestId req) (Right body)
   where
     body = object
         [ "protocolVersion" .= ("2024-11-05" :: String)
@@ -23,11 +23,10 @@ handleInitialize req = Response (Just (requestId req)) (Right body)
         ]
 
 handleListTools :: Request -> Response
-handleListTools req = Response (Just (requestId req)) (Right body)
+handleListTools req = Response (requestId req) (Right body)
   where
     body = object
-        [ "tools" .= [ echoTool
-                     , wikipediaSummaryTool
+        [ "tools" .= [ wikipediaSummaryTool
                      , wikipediaLanguagesTool
                      , wikipediaHistoryTool
                      ]
@@ -37,4 +36,4 @@ handleCallTool :: Request -> IO Response
 handleCallTool req =
     case params req of
         Just paramObj -> resolveTool (requestId req) paramObj
-        Nothing -> return $ Response (Just (requestId req)) $ Left $ RPCError (-32602) "No arguments given"
+        Nothing -> return $ Response (requestId req) $ Left $ RPCError (-32602) "No arguments given"
