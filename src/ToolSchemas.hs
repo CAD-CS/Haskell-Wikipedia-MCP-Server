@@ -4,7 +4,6 @@ module ToolSchemas
     ( wikipediaSummaryTool
     , wikipediaLanguagesTool
     , wikipediaHistoryTool
-    , echoTool
     ) where
 
 import Data.Aeson
@@ -47,9 +46,3 @@ wikipediaHistoryTool = mkTool
     "topic"
     "The Wikipedia topic to fetch edit history for"
 
-echoTool :: Value
-echoTool = mkTool
-    "echo"
-    "Echoes back the provided message"
-    "message"
-    "The message to echo"

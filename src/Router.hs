@@ -13,4 +13,4 @@ routeRequest req =
         "tools/list" -> return $ Just $ handleListTools req
         "tools/call" -> Just <$> handleCallTool req
         "notifications/initialized" -> return Nothing
-        _ -> return $ Just $ Response (Just (requestId req)) $ Left $ RPCError (-32601) "Method not found"
+        _ -> return $ Just $ Response (requestId req) $ Left $ RPCError (-32601) "Method not found"
