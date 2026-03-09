@@ -9,6 +9,9 @@ module Wikipedia
 import Control.Exception (try, SomeException)
 import Data.Aeson
 import Data.Function ((&))
+import Data.Text
+import Data.Text.Lazy.Encoding (decodeUtf8)
+import Data.Text.Lazy (unpack, toStrict)
 import Response
 import ResultExtractor
 import qualified Network.HTTP.Simple as HTTP
@@ -65,5 +68,18 @@ toResponse reqId extractor res =
 extractResult :: Maybe Int -> (Value -> Maybe Value) -> Value -> Response
 extractResult reqId extractor rawVal = 
     case extractor rawVal of
-        Just val -> Response reqId $ Right val 
+        Just val -> Response reqId $ Right (mkContent val) 
         Nothing -> Response reqId $ Left $ RPCError (-32603) "Parse error"
+
+mkContent :: Value -> Value
+mkContent val = object 
+    [ "content" .= 
+        [ object 
+            [ "type" .= ("text" :: Text)
+            , "text" .= jsonToText val 
+            ]
+        ]
+    ]
+
+jsonToText :: Value -> Text
+jsonToText = toStrict . decodeUtf8 . encode
