@@ -8,7 +8,9 @@ import Request
 import Response
 import Wikipedia
 
-resolveTool :: Maybe Int -> Parameters -> IO Response
+type RequestId = Maybe Int
+
+resolveTool :: RequestId -> Parameters -> IO Response
 resolveTool reqId p =
     case toolName p of
         Just "wikipedia_summary" -> dispatch getWikipediaSummary

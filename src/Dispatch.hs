@@ -1,10 +1,14 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Dispatch where
+module Dispatch (dispatchTool) where
 
 import Response
 
-dispatchTool :: Maybe Int -> Maybe String -> (Maybe Int -> String -> IO Response) -> IO Response
+type RequestId = Maybe Int
+type MaybeTopic = Maybe String 
+type Tool = (Maybe Int -> String -> IO Response)
+
+dispatchTool :: RequestId -> MaybeTopic -> Tool -> IO Response
 dispatchTool reqId mTopic tool =
     case mTopic of
         Nothing -> return $ Response reqId $ Left $ RPCError (-32602) "Invalid params"

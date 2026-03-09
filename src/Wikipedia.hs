@@ -18,31 +18,36 @@ import qualified Network.HTTP.Simple as HTTP
 import qualified Data.ByteString as BS
 import qualified Network.HTTP.Types.Status as HTTPStatus
 
-summaryBaseURL :: String
+type RequestId = Maybe Int
+type Topic = String
+type Url = String
+type Extractor = (Value -> Maybe Value)
+
+summaryBaseURL :: Url
 summaryBaseURL = "https://en.wikipedia.org/api/rest_v1/page/"
 
-pageBaseURL :: String
+pageBaseURL :: Url
 pageBaseURL = "https://en.wikipedia.org/w/rest.php/v1/page/"
 
-summaryURL :: String -> String
+summaryURL :: Topic -> Url
 summaryURL topic = summaryBaseURL ++ "summary/" ++ topic
 
-historyURL :: String -> String
+historyURL :: Topic -> Url
 historyURL topic = pageBaseURL ++ topic ++ "/history"
 
-languageURL :: String -> String
+languageURL :: Topic -> Url
 languageURL topic = pageBaseURL ++ topic ++ "/links/language"
 
-getWikipediaSummary :: Maybe Int -> String -> IO Response
+getWikipediaSummary :: RequestId -> Topic -> IO Response
 getWikipediaSummary reqId topic = fetchWikipediaPage reqId summaryExtractor (summaryURL topic)
 
-getWikipediaHistory :: Maybe Int -> String -> IO Response
+getWikipediaHistory :: RequestId -> Topic -> IO Response
 getWikipediaHistory reqId topic = fetchWikipediaPage reqId historyExtractor (historyURL topic)
 
-getWikipediaLanguages :: Maybe Int -> String -> IO Response
+getWikipediaLanguages :: RequestId -> Topic -> IO Response
 getWikipediaLanguages reqId topic = fetchWikipediaPage reqId languageExtractor (languageURL topic)
 
-fetchWikipediaPage :: Maybe Int -> (Value -> Maybe Value) -> String -> IO Response
+fetchWikipediaPage :: RequestId -> Extractor -> Url -> IO Response
 fetchWikipediaPage reqId extractor url = do
     baseReq <- HTTP.parseRequest url
     let req = baseReq
@@ -53,7 +58,7 @@ fetchWikipediaPage reqId extractor url = do
         Left _ -> return $ Response reqId $ Left $ RPCError (-32603) "HTTP request failed"
         Right httpRes -> return $ toResponse reqId extractor httpRes
 
-toResponse :: Maybe Int -> (Value -> Maybe Value) -> HTTP.Response BS.ByteString -> Response
+toResponse :: RequestId -> Extractor -> HTTP.Response BS.ByteString -> Response
 toResponse reqId extractor res =
     case HTTPStatus.statusCode (HTTP.getResponseStatus res) of
         200 -> case eitherDecodeStrict (HTTP.getResponseBody res) of
@@ -65,7 +70,7 @@ toResponse reqId extractor res =
   where
     processRequestValue = extractResult reqId extractor
 
-extractResult :: Maybe Int -> (Value -> Maybe Value) -> Value -> Response
+extractResult :: RequestId -> Extractor -> Value -> Response
 extractResult reqId extractor rawVal = 
     case extractor rawVal of
         Just val -> Response reqId $ Right (mkContent val) 
