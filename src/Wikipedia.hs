@@ -11,7 +11,7 @@ import Data.Aeson
 import Data.Function ((&))
 import Data.Text
 import Data.Text.Lazy.Encoding (decodeUtf8)
-import Data.Text.Lazy (unpack, toStrict)
+import Data.Text.Lazy (toStrict)
 import Response
 import ResultExtractor
 import qualified Network.HTTP.Simple as HTTP
